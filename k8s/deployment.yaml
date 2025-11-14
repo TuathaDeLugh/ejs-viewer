@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ejs-viewer-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ejs-viewer
+  template:
+    metadata:
+      labels:
+        app: ejs-viewer
+    spec:
+      containers:
+      - name: ejs-viewer
+        image: ejs-viewer:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5173
+        - containerPort: 5174

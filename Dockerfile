@@ -11,16 +11,18 @@ FROM node:22 AS backend-builder
 WORKDIR /app
 COPY server/package.json server/yarn.lock ./server/
 RUN cd server && yarn install
-COPY server/. .
+COPY server/src ./server/src
+COPY server/tsconfig.json ./server/
 RUN cd server && yarn build
 
 # Stage 3: Final image
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY --from=frontend-builder /app/dist ./dist
-COPY --from=backend-builder /app/dist ./server/dist
-COPY --from=backend-builder /app/node_modules ./server/node_modules
+COPY --from=backend-builder /app/server/dist ./server/dist
+COPY --from=backend-builder /app/server/node_modules ./server/node_modules
 COPY server/.env ./server/.env
 
-EXPOSE 3001
+EXPOSE 5173
+EXPOSE 5174
 CMD ["node", "server/dist/index.js"]
