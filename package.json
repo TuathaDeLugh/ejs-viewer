@@ -4,11 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev-all": "vite && cd server && yarn dev",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "server-dev": "cd server && yarn dev",
+    "server-build": "cd server && yarn build",
+    "server-start": "cd server && yarn start"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

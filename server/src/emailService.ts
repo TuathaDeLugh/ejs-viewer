@@ -1,19 +1,20 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.MAILTRAP_HOST || "sandbox.smtp.mailtrap.io",
-  port: parseInt(process.env.MAILTRAP_PORT || "2525"),
-  auth: {
-    user: process.env.MAILTRAP_USER || "1b9392ab357236",
-    pass: process.env.MAILTRAP_PASS || "a6ae36673d49cb",
-  },
-});
-
 export async function sendEmail(
   html: string,
   recipientEmail: string,
   senderEmail: string
 ) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAILHOST,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.MAILUSER,
+      pass: process.env.MAILPASS,
+    },
+  });
+
   try {
     const mailOptions = {
       from: senderEmail,

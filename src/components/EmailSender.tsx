@@ -7,7 +7,7 @@ interface EmailSenderProps {
 }
 
 export function EmailSender({ rendered }: EmailSenderProps) {
-  const [recipientEmail, setRecipientEmail] = useState("test@example.com");
+  const [recipientEmail, setRecipientEmail] = useState("umangsailor@gmail.com");
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
@@ -30,27 +30,36 @@ export function EmailSender({ rendered }: EmailSenderProps) {
     setIsSending(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/send-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          html: rendered,
-          recipientEmail,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:3001"}/send-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            html: rendered,
+            recipientEmail,
+          }),
+        }
+      );
 
       const result = await response.json();
 
       if (response.ok) {
         console.log(`Email sent successfully! Message ID: ${result.messageId}`);
-        toast.success(`Email sent successfully! Message ID: ${result.messageId}`);
+        toast.success(
+          `Email sent successfully! Message ID: ${result.messageId}`
+        );
       } else {
         toast.error(`Failed to send email: ${result.error}`);
       }
     } catch (error) {
-      toast.error(`Error sending email: ${error instanceof Error ? error.message : "Unknown error"}`);
+      toast.error(
+        `Error sending email: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setIsSending(false);
     }
@@ -59,7 +68,9 @@ export function EmailSender({ rendered }: EmailSenderProps) {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">Send Test Email</h3>
+        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+          Send Test Email
+        </h3>
         <button
           onClick={handleSave}
           className="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-1.5 px-1.5 rounded flex items-center justify-center"

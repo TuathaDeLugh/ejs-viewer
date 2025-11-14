@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import path from "path";
 import { sendEmail } from "./emailService";
 
 dotenv.config();
@@ -12,6 +14,9 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../../dist")));
 
 // Swagger configuration
 const swaggerOptions = {
@@ -27,8 +32,11 @@ const swaggerOptions = {
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use("/api-docs", swaggerUi.serve as any, swaggerUi.setup(swaggerSpec) as any);
+app.use(
+  "/api-docs",
+  swaggerUi.serve as any,
+  swaggerUi.setup(swaggerSpec) as any
+);
 
 /**
  * @swagger
@@ -101,20 +109,27 @@ app.post("/send-email", async (req: Request, res: Response) => {
     const { html, recipientEmail } = req.body;
 
     if (!html || !recipientEmail) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Missing required fields: html, recipientEmail",
-        });
+      return res.status(400).json({
+        error: "Missing required fields: html, recipientEmail",
+      });
     }
 
-    const result = await sendEmail(html, recipientEmail, "noreply@yourdomain.com");
+    const result = await sendEmail(
+      html,
+      recipientEmail,
+      "noreply@yourdomain.com"
+    );
     res.json({ success: true, messageId: result.messageId });
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).json({ error: "Failed to send email" });
   }
+});
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get("*", (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../../dist/index.html"));
 });
 
 app.listen(PORT, () => {
